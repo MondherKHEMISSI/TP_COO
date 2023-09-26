@@ -1,4 +1,4 @@
 from django.contrib import admin
-from . models import Prices
+from . models import Departement
 
-admin.site.register(Prices)
+admin.site.register(Departement)

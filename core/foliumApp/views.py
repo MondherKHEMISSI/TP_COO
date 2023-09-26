@@ -4,7 +4,7 @@ import random
 import requests
 import pandas
 from django.conf import settings
-from .models import Prices
+from .models import Departement
 
 no_of_colors=100
 colors=["#"+''.join([random.choice('0123456789ABCDEF') for i in range(6)])
@@ -21,7 +21,22 @@ colors=["#"+''.join([random.choice('0123456789ABCDEF') for i in range(6)])
 """
 
 def index(request):
-    prices = Prices.objects.all()
+    prices = Departement.objects.all()
+    
+    for price in prices:
+        zip_code = price.zip_code
+        source = requests.get('https://api.openweathermap.org/data/2.5/weather?zip='
+                               + zip_code + '000' + ',fr&appid=cc37ea913904c8044ba2b814464bcfee&units=metric')
+        
+        if source.status_code == 404: 
+            Departement.objects.filter(zip_code = zip_code).update(meteo = 'Not Found!')
+        else:
+            source = source.json()
+            Departement.objects.filter(zip_code = zip_code).update(meteo = str(source['main']['temp']) + ' °C')
+    
+    
+    
+    
     data_file = settings.BASE_DIR / 'data' / 'prices.csv'
     departements = pandas.read_csv(data_file)
     print(departements)
@@ -36,12 +51,14 @@ def index(request):
         for price in prices:
 
             if name == price.departement_name:
-                fr_departements['features'][i]['properties']['€/m²'] = price.price
+                fr_departements['features'][i]['properties']['€/m²'] = price.price_m2
+                fr_departements['features'][i]['properties']['temperature'] = price.meteo
                 found = True
                 break
 
         if not found:
             fr_departements['features'][i]['properties']['€/m²'] = 'NaN'
+            fr_departements['features'][i]['properties']['temperature'] = 'Not Found!'
 
         found = False
 
@@ -50,16 +67,16 @@ def index(request):
 
     
     popup = folium.GeoJsonPopup(
-    fields=["nom", "€/m²"],
-    aliases=["name", "€/m²"],
+    fields=["nom", "€/m²", "temperature"],
+    aliases=["Name", "Price/m²", "Temperature"],
     localize=True,
     labels=True,
     style="background-color: yellow;",
 )
 
     tooltip = folium.GeoJsonTooltip(
-    fields=["nom", "€/m²"],
-    aliases=["name:", "€/m²:"],
+    fields=["nom", "€/m²", "temperature"],
+    aliases=["Name:", "Price/m²:", "Temperature:"],
     localize=True,
     sticky=False,
     labels=True,

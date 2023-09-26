@@ -1,17 +1,17 @@
 import csv
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from foliumApp.models import Prices
+from foliumApp.models import Departement
 
 
 class Command(BaseCommand):
     help = 'Write data to Price m2 file'
 
     def handle(self, *args, **kwargs):
-        departements = Prices.objects.all()
+        departements = Departement.objects.all()
         
         # csv header
-        fieldnames = ['departement_name', 'price']
+        fieldnames = ['departement_name', 'price_m2', 'zip_code', 'meteo']
 
 
         with open('prices.csv', 'w', encoding='UTF8', newline='') as f:
@@ -19,4 +19,7 @@ class Command(BaseCommand):
             writer.writeheader()
             for departement in departements:
                 writer.writerow({'departement_name': departement.departement_name, 
-                                 'price': departement.price})
+                                 'price_m2': departement.price_m2,
+                                 'zip_code': departement.zip_code,
+                                 'meteo': departement.meteo
+                                })

@@ -1,7 +1,7 @@
 import csv
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from foliumApp.models import Prices
+from foliumApp.models import Departement
 
 
 class Command(BaseCommand):
@@ -17,14 +17,17 @@ class Command(BaseCommand):
             for row in reader:
                 records.append({k: row[k] for k in keys})
 
-        # extract the departement name
+        
         for record in records:
             departement_name = record['Département'].split(" ")[0]
+            zip_code = record['Département'].split(" ")[1].split("(")[1].split(")")[0]
             record['Département'] = departement_name
+            record['zip_code'] = zip_code
             
 
             # add the data to the database
-            Prices.objects.get_or_create(
+            Departement.objects.get_or_create(
                 departement_name=record['Département'],
-                price=record['€/m²'],
+                zip_code=record['zip_code'],
+                price_m2=record['€/m²'] + ' €',
             )
