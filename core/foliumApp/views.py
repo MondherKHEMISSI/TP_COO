@@ -5,6 +5,9 @@ import requests
 import pandas
 from django.conf import settings
 from .models import Departement
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 no_of_colors=100
 colors=["#"+''.join([random.choice('0123456789ABCDEF') for i in range(6)])
@@ -22,11 +25,11 @@ colors=["#"+''.join([random.choice('0123456789ABCDEF') for i in range(6)])
 
 def index(request):
     prices = Departement.objects.all()
-    
+    weatherKey = os.environ.get('DJANGO_WEATHER_KEY') 
     for price in prices:
         zip_code = price.zip_code
         source = requests.get('https://api.openweathermap.org/data/2.5/weather?zip='
-                               + zip_code + '000' + ',fr&appid=cc37ea913904c8044ba2b814464bcfee&units=metric')
+                               + zip_code + '000' + ',fr&appid=' + weatherKey + '&units=metric')
         
         if source.status_code == 404: 
             Departement.objects.filter(zip_code = zip_code).update(meteo = 'Not Found!')
