@@ -25,7 +25,7 @@ colors=["#"+''.join([random.choice('0123456789ABCDEF') for i in range(6)])
 
 def index(request):
     prices = Departement.objects.all()
-    weatherKey = os.environ.get('DJANGO_WEATHER_KEY') 
+    weatherKey = os.environ.get('WEATHER_KEY') 
     for price in prices:
         zip_code = price.zip_code
         source = requests.get('https://api.openweathermap.org/data/2.5/weather?zip='
@@ -42,7 +42,6 @@ def index(request):
     
     data_file = settings.BASE_DIR / 'data' / 'prices.csv'
     departements = pandas.read_csv(data_file)
-    print(departements)
     url = "https://france-geojson.gregoiredavid.fr/repo/departements.geojson"
 
     
