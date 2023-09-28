@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('foliumApp', '0001_initial'),
+        ("foliumApp", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='prices',
-            name='price',
+            model_name="prices",
+            name="price",
             field=models.IntegerField(),
         ),
     ]

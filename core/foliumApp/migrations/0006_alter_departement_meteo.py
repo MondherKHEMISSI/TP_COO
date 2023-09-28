@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('foliumApp', '0005_alter_departement_price_m2'),
+        ("foliumApp", "0005_alter_departement_price_m2"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='departement',
-            name='meteo',
-            field=models.CharField(blank=True, default='', max_length=20),
+            model_name="departement",
+            name="meteo",
+            field=models.CharField(blank=True, default="", max_length=20),
         ),
     ]
