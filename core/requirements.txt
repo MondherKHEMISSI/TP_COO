@@ -1,4 +1,0 @@
-django
-folium
-python-dotenv
-pandas
