@@ -6,6 +6,8 @@ class Departement(models.Model):
     zip_code = models.CharField(max_length=10)
     price_m2 = models.CharField(max_length=20)
     meteo = models.CharField(max_length=20, default="", blank=True)
+    longitude = models.FloatField(default=0)
+    latitude = models.FloatField(default=0)
 
     def __str__(self):
         return self.name
@@ -102,3 +104,6 @@ class Factory(models.Model):
             stocksCost += ingredient.costs(self.departement.zip_code)
 
         return machineCost + areaCost + stocksCost
+
+    def getLongitudeLatitude(self):
+        return self.departement.latitude, self.departement.longitude

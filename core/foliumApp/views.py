@@ -1,5 +1,3 @@
-import random
-
 import folium
 import pandas
 import requests
@@ -10,13 +8,6 @@ from dotenv import load_dotenv
 from .models import Departement, Factory
 
 load_dotenv()
-
-no_of_colors = 100
-colors = [
-    "#" + "".join([random.choice("0123456789ABCDEF") for i in range(6)])
-    for j in range(no_of_colors)
-]
-# print(colors)
 
 """
     //Régions
@@ -127,45 +118,13 @@ def index(request):
         popup=popup,
     ).add_to(m)
 
-    folium.Marker(
-        location=[43.604, 1.44305],
-        icon=folium.Icon(color="green", prefix="fa", icon="home"),
-    ).add_to(m)
-    folium.Marker(location=[50.433331, 2.83333], icon=folium.Icon(icon="star")).add_to(
-        m
-    )
-    folium.Marker(
-        location=[48.390394, -4.486076], icon=folium.Icon(icon="star")
-    ).add_to(m)
-    folium.Marker(
-        location=[48.5734053, 7.7521113], icon=folium.Icon(icon="star")
-    ).add_to(m)
-    folium.Marker(location=[46.71109, 1.7191036], icon=folium.Icon(icon="star")).add_to(
-        m
-    )
-    folium.Marker(location=[44.566667, 6.083333], icon=folium.Icon(icon="star")).add_to(
-        m
-    )
-    folium.Marker(
-        location=[43.091463, -0.045726], icon=folium.Icon(icon="star")
-    ).add_to(m)
-    """
-    sum = 0
-    machines = Machine.objects.all()
-    for machine in machine:
-        sum += int(machine.price.split(" ")[0])
-
-
-    factory = Factory.objects.all()
-    for fac in factory:
-        name = fac.departement
-        dep = Departement.objects.get(departement_name=name)
-        priceUnit = dep.price_m2
-        sum +=  int(fac.area.split(" ")[0]) * int(priceUnit.split(" ")[0])
-    """
     totalCosts = 0
     factories = Factory.objects.all()
     for factory in factories:
+        folium.Marker(
+            location=factory.getLongitudeLatitude(),
+            icon=folium.Icon(color="green", prefix="fa", icon="star"),
+        ).add_to(m)
         totalCosts += factory.costs()
 
     context = {"map": m._repr_html_(), "totalCosts": str(totalCosts) + " €"}
