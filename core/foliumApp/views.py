@@ -7,7 +7,7 @@ from django.conf import settings
 from django.shortcuts import render
 from dotenv import load_dotenv
 
-from .models import Departement
+from .models import Departement, Factory
 
 load_dotenv()
 
@@ -61,7 +61,7 @@ def index(request):
     for i in range(len(fr_departements["features"])):
         name = fr_departements["features"][i]["properties"]["nom"]
         for price in prices:
-            if name == price.departement_name:
+            if name == price.name:
                 fr_departements["features"][i]["properties"]["€/m²"] = price.price_m2
                 fr_departements["features"][i]["properties"][
                     "temperature"
@@ -163,5 +163,10 @@ def index(request):
         priceUnit = dep.price_m2
         sum +=  int(fac.area.split(" ")[0]) * int(priceUnit.split(" ")[0])
     """
-    context = {"map": m._repr_html_()}
+    totalCosts = 0
+    factories = Factory.objects.all()
+    for factory in factories:
+        totalCosts += factory.costs()
+
+    context = {"map": m._repr_html_(), "totalCosts": str(totalCosts) + " €"}
     return render(request, "index.html", context)
