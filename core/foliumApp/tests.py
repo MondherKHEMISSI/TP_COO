@@ -3,9 +3,10 @@
 from django.test import TestCase
 
 from .models import Departement, Factory, Ingredient, IngredientQuantity, Machine, Price
+from .script import getData
 
 
-class MachineModelTests(TestCase):
+class FactoryModelTests(TestCase):
     def setUp(self):
         hauteGaronne = Departement.objects.create(
             name="Haute-Garonne", zip_code="31", price_m2="2000 €"
@@ -48,3 +49,9 @@ class MachineModelTests(TestCase):
             totalCosts += factory.costs()
 
         self.assertEqual(totalCosts, 105000)
+
+    def test_get_data(self):
+        id = 4
+        data = getData(4)
+        self.assertIsNotNone(data)
+        self.assertEqual(data["id"], id)
