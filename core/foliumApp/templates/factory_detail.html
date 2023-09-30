@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    span {
+        font-weight: bold;
+    }
+</style>
+
+<p><span>Name: </span>{{ object.name }}</p>
+<p><span>Area: </span>{{ object.area }}</p>
+<p><span>Departement: </span>{{ object.departement.name }}</p>
+{% for machine in object.machines.all %}
+<p><span>Machine: </span>{{ machine.name }}</p>
+{%  endfor %}
+<p><span>Recipes: </span>{{ object.recipe }}</p>
+{% for ingredient in object.stocks.all %}
+<p><span>Stock: </span>{{ ingredient }}</p>
+{% endfor %}
+
+
+{% endblock %}

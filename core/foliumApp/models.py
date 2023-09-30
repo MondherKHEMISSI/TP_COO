@@ -9,6 +9,9 @@ class Departement(models.Model):
     longitude = models.FloatField(default=0)
     latitude = models.FloatField(default=0)
 
+    class Meta:
+        ordering = ["zip_code"]
+
     def __str__(self):
         return self.name
 
@@ -57,7 +60,7 @@ class Price(models.Model):
     price = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.price
+        return f"{self.ingredient}: {self.price} in {self.departement_name}"
 
     def costs(self):
         pass
@@ -89,6 +92,9 @@ class Factory(models.Model):
     machines = models.ManyToManyField(Machine)
     recipes = models.ManyToManyField(Recipe)
     stocks = models.ManyToManyField(IngredientQuantity)
+
+    class Meta:
+        verbose_name_plural = "factories"
 
     def __str__(self):
         return self.name

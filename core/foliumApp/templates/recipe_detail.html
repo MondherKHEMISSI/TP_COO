@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    span {
+        font-weight: bold;
+    }
+</style>
+
+<p><span>Name: </span>{{ object.name }}</p>
+<p><span>Zip code: </span>{{ object.zip_code }}</p>
+<p><span>Price/m2: </span>{{ object.price_m2 }}</p>
+<p><span>Meteo: </span>{{ object.meteo }}</p>
+
+
+{% endblock %}

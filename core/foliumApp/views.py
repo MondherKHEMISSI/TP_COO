@@ -1,30 +1,99 @@
+import os
+
 import folium
 import pandas
 import requests
 from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.generic.detail import DetailView
 from dotenv import load_dotenv
 
-from .models import Departement, Factory
+from .models import (
+    Action,
+    Departement,
+    Factory,
+    Ingredient,
+    IngredientQuantity,
+    Machine,
+    Price,
+    Recipe,
+)
 
 load_dotenv()
 
+# Choose to render regions or departements
 """
-    //Régions
+    # Régions
     https://france-geojson.gregoiredavid.fr/repo/regions.geojson
 
-    //Départements
+    # Départements
     https://france-geojson.gregoiredavid.fr/repo/departements.geojson
 
 """
 
 
+# DetailView for every model
+class DepartementDetailView(DetailView):
+    template_name = "departement_detail.html"
+    model = Departement
+
+
+class MachineDetailView(DetailView):
+    # template_name = "machine_detail.html"
+    model = Machine
+
+    def render_to_response(self, context, **response_kwargs):
+        # Récupérez les données du modèle
+        data = {
+            "id": self.object.id,
+            "name": self.object.name,
+            "price": self.object.price,
+            # Ajoutez d'autres champs que vous souhaitez inclure dans la réponse JSON
+        }
+        return JsonResponse(data)
+
+
+class FactoryDetailView(DetailView):
+    template_name = "factory_detail.html"
+    model = Factory
+
+
+class IngredientDetailView(DetailView):
+    template_name = "ingredient_detail.html"
+    model = Ingredient
+
+
+class IgredientQuantityDetailView(DetailView):
+    template_name = "ingredientquantity_detail.html"
+    model = IngredientQuantity
+
+
+class PriceDetailView(DetailView):
+    template_name = "price_detail.html"
+    model = Price
+
+
+class RecipeDetailView(DetailView):
+    template_name = "recipe_detail.html"
+    model = Recipe
+
+
+class ActionDetailView(DetailView):
+    template_name = "action_detail.html"
+    model = Action
+
+
 def index(request):
-    prices = Departement.objects.all()
-    """
+    departements = Departement.objects.all()
+    factories = Factory.objects.all()
+
+    # It's an API call to retrieve temperature
+    # for every departements related to a factory
+
     weatherKey = os.environ.get("WEATHER_KEY")
-    for price in prices:
-        zip_code = price.zip_code
+    for factory in factories:
+        zip_code = factory.departement.zip_code
         source = requests.get(
             "https://api.openweathermap.org/data/2.5/weather?zip="
             + zip_code
@@ -41,22 +110,29 @@ def index(request):
             Departement.objects.filter(zip_code=zip_code).update(
                 meteo=str(source["main"]["temp"]) + " °C"
             )
-    """
+
+    # Import a csv file of price/m2 and color up
+    # the departements in function of their price/m2 from yellow to red
     data_file = settings.BASE_DIR / "data" / "prices.csv"
-    departements = pandas.read_csv(data_file)
+    departementsPrices = pandas.read_csv(data_file)
+
+    # Url to display regions or departements
     url = "https://france-geojson.gregoiredavid.fr/repo/departements.geojson"
 
     fr_departements = requests.get(url).json()
     found = False
 
+    # Adding price/m2 and temperature to display a popup on every departements hover
     for i in range(len(fr_departements["features"])):
         name = fr_departements["features"][i]["properties"]["nom"]
-        for price in prices:
-            if name == price.name:
-                fr_departements["features"][i]["properties"]["€/m²"] = price.price_m2
+        for departement in departements:
+            if name == departement.name:
+                fr_departements["features"][i]["properties"][
+                    "€/m²"
+                ] = departement.price_m2
                 fr_departements["features"][i]["properties"][
                     "temperature"
-                ] = price.meteo
+                ] = departement.meteo
                 found = True
                 break
 
@@ -68,6 +144,7 @@ def index(request):
 
     m = folium.Map(location=[46.71109, 1.7191036], zoom_start=6)
 
+    # Functions related to Folium map rendering
     popup = folium.GeoJsonPopup(
         fields=["nom", "€/m²", "temperature"],
         aliases=["Name", "Price/m²", "Temperature"],
@@ -93,7 +170,7 @@ def index(request):
 
     folium.Choropleth(
         geo_data=fr_departements,
-        data=departements,
+        data=departementsPrices,
         columns=["departement_name", "price"],
         key_on="feature.properties.nom",
         fill_color="YlOrRd",
@@ -118,8 +195,9 @@ def index(request):
         popup=popup,
     ).add_to(m)
 
+    # Calculating the total costs of every factory
+    # and displaying a marker in the map for it
     totalCosts = 0
-    factories = Factory.objects.all()
     for factory in factories:
         folium.Marker(
             location=factory.getLongitudeLatitude(),
