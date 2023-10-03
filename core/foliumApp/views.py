@@ -1,5 +1,3 @@
-import os
-
 import folium
 import pandas
 import requests
@@ -158,7 +156,7 @@ def index(request):
 
     # It's an API call to retrieve temperature
     # for every departements related to a factory
-
+    """
     weatherKey = os.environ.get("WEATHER_KEY")
     for factory in factories:
         zip_code = factory.departement.zip_code
@@ -178,6 +176,7 @@ def index(request):
             Departement.objects.filter(zip_code=zip_code).update(
                 meteo=str(source["main"]["temp"]) + " °C"
             )
+    """
 
     # Import a csv file and color up the departements
     # in function of their price/m2 from yellow to red
