@@ -2,3 +2,4 @@ django
 folium
 python-dotenv
 pandas
+pre-commit
