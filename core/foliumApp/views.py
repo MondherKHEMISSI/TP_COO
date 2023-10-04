@@ -1,10 +1,15 @@
+import json
+
 import folium
 import pandas
 import requests
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
 from dotenv import load_dotenv
 
 from .models import (
@@ -16,6 +21,7 @@ from .models import (
     Machine,
     Price,
     Recipe,
+    Sale,
 )
 
 load_dotenv()
@@ -29,6 +35,27 @@ load_dotenv()
     https://france-geojson.gregoiredavid.fr/repo/departements.geojson
 
 """
+
+
+# CreateView
+@method_decorator(csrf_exempt, name="dispatch")
+class SaleCreateView(CreateView):
+    model = Sale
+    fields = ["departement", "profit"]
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        departement = data.get("departement")
+        profit = data.get("profit")
+
+        Sale.objects.create(
+            departement=Departement.objects.get(zip_code=str(departement)),
+            profit=profit,
+        )
+
+        message = {"message": "Sale successfully created!"}
+        json.dumps(message, indent=4)
+        return JsonResponse(message, json_dumps_params={"indent": 4})
 
 
 # DetailView for every model
@@ -45,6 +72,7 @@ class DepartementDetailView(DetailView):
             "meteo": self.object.meteo,
             "longitude": self.object.longitude,
             "latitude": self.object.latitude,
+            "costs": self.object.costs(),
         }
         return JsonResponse(data)
 
@@ -75,6 +103,7 @@ class FactoryDetailView(DetailView):
             "machines": [machine.name for machine in self.object.machines.all()],
             "stocks": [stock.ingredient.name for stock in self.object.stocks.all()],
             "recipes": [recipe.name for recipe in self.object.recipes.all()],
+            "costs": str(self.object.costs()) + " €",
         }
         return JsonResponse(data)
 
@@ -264,8 +293,10 @@ def index(request):
 
     # Calculating the total costs of every factory
     # and displaying a marker in the map for it
+
     totalCosts = 0
     for factory in factories:
+        factory.buyStocks()
         folium.Marker(
             location=factory.getLongitudeLatitude(),
             icon=folium.Icon(color="green", prefix="fa", icon="star"),

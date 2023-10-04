@@ -9,6 +9,7 @@ from .models import (
     Machine,
     Price,
     Recipe,
+    Sale,
 )
 
 admin.site.register(Departement)
@@ -19,3 +20,4 @@ admin.site.register(Ingredient)
 admin.site.register(IngredientQuantity)
 admin.site.register(Action)
 admin.site.register(Recipe)
+admin.site.register(Sale)

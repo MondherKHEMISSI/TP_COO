@@ -41,6 +41,9 @@ class IngredientQuantity(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
     quantity = models.CharField(max_length=50)
 
+    class Meta:
+        verbose_name_plural = "Ingredients quantities"
+
     def __str__(self):
         return f"{self.ingredient}: {self.quantity}"
 
@@ -113,3 +116,16 @@ class Factory(models.Model):
 
     def getLongitudeLatitude(self):
         return self.departement.latitude, self.departement.longitude
+
+    def buyStocks(self):
+        for recipe in self.recipes.all():
+            for ingredient in recipe.action.ingredient.all():
+                self.stocks.create(ingredient=ingredient, quantity=ingredient.quantity)
+
+
+class Sale(models.Model):
+    departement = models.ForeignKey(Departement, on_delete=models.PROTECT)
+    profit = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"Sales in {self.departement}: {self.profit} €"

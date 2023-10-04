@@ -10,6 +10,7 @@ from .views import (
     MachineDetailView,
     PriceDetailView,
     RecipeDetailView,
+    SaleCreateView,
 )
 
 urlpatterns = [
@@ -32,4 +33,5 @@ urlpatterns = [
     path("price/<int:pk>/", PriceDetailView.as_view(), name="price_detail"),
     path("recipe/<int:pk>/", RecipeDetailView.as_view(), name="recipe_detail"),
     path("action/<int:pk>/", ActionDetailView.as_view(), name="action_detail"),
+    path("sale/", SaleCreateView.as_view(), name="sale_detail"),
 ]
