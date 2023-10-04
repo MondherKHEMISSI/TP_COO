@@ -3,3 +3,4 @@ folium
 python-dotenv
 pandas
 pre-commit
+ipython
