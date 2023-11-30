@@ -99,10 +99,10 @@ class FactoryDetailView(DetailView):
             "id": self.object.id,
             "name": self.object.name,
             "area": self.object.area,
-            "departement": self.object.departement.name,
-            "machines": [machine.name for machine in self.object.machines.all()],
-            "stocks": [stock.ingredient.name for stock in self.object.stocks.all()],
-            "recipes": [recipe.name for recipe in self.object.recipes.all()],
+            "departement_ID": self.object.departement.id,
+            "machines_IDs": [machine.id for machine in self.object.machines.all()],
+            "stocks_IDs": [stock.ingredient.id for stock in self.object.stocks.all()],
+            "recipes_IDs": [recipe.id for recipe in self.object.recipes.all()],
             "costs": str(self.object.costs()) + " €",
         }
         return JsonResponse(data)
@@ -120,14 +120,14 @@ class IngredientDetailView(DetailView):
         return JsonResponse(data)
 
 
-class IgredientQuantityDetailView(DetailView):
+class IngredientQuantityDetailView(DetailView):
     template_name = "ingredientquantity_detail.html"
     model = IngredientQuantity
 
     def render_to_response(self, context, **response_kwargs):
         data = {
             "id": self.object.id,
-            "ingredient": self.object.ingredient.name,
+            "ingredient_ID": self.object.ingredient.id,
             "quantity": self.object.quantity,
         }
         return JsonResponse(data)
@@ -140,8 +140,8 @@ class PriceDetailView(DetailView):
     def render_to_response(self, context, **response_kwargs):
         data = {
             "id": self.object.id,
-            "departement_name": self.object.departement_name.name,
-            "ingredient": self.object.ingredient.name,
+            "departement_ID": self.object.departement_name.id,
+            "ingredient_ID": self.object.ingredient.id,
             "price": self.object.price,
         }
         return JsonResponse(data)
@@ -155,7 +155,7 @@ class RecipeDetailView(DetailView):
         data = {
             "id": self.object.id,
             "name": self.object.name,
-            "action": self.object.action.action,
+            "action_ID": self.object.action.id,
         }
         return JsonResponse(data)
 
@@ -170,10 +170,9 @@ class ActionDetailView(DetailView):
             "action": self.object.action,
             "command": self.object.command,
             "duration": self.object.duration,
-            "machine": self.object.machine.name,
-            "ingredient": [
-                ingredient.ingredient.name
-                for ingredient in self.object.ingredient.all()
+            "machine_ID": self.object.machine.id,
+            "ingredients_Quantity_IDs": [
+                ingredient.id for ingredient in self.object.ingredient.all()
             ],
         }
         return JsonResponse(data)
@@ -296,7 +295,7 @@ def index(request):
 
     totalCosts = 0
     for factory in factories:
-        factory.buyStocks()
+        # factory.buyStocks()
         folium.Marker(
             location=factory.getLongitudeLatitude(),
             icon=folium.Icon(color="green", prefix="fa", icon="star"),

@@ -5,8 +5,8 @@ from .views import (
     ActionDetailView,
     DepartementDetailView,
     FactoryDetailView,
-    IgredientQuantityDetailView,
     IngredientDetailView,
+    IngredientQuantityDetailView,
     MachineDetailView,
     PriceDetailView,
     RecipeDetailView,
@@ -27,7 +27,7 @@ urlpatterns = [
     ),
     path(
         "ingredientquantity/<int:pk>/",
-        IgredientQuantityDetailView.as_view(),
+        IngredientQuantityDetailView.as_view(),
         name="ingredientquantity_detail",
     ),
     path("price/<int:pk>/", PriceDetailView.as_view(), name="price_detail"),

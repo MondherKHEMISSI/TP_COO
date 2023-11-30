@@ -117,10 +117,12 @@ class Factory(models.Model):
     def getLongitudeLatitude(self):
         return self.departement.latitude, self.departement.longitude
 
+    """
     def buyStocks(self):
         for recipe in self.recipes.all():
             for ingredient in recipe.action.ingredient.all():
                 self.stocks.create(ingredient=ingredient, quantity=ingredient.quantity)
+    """
 
 
 class Sale(models.Model):
