@@ -8,11 +8,11 @@ using json = nlohmann::json;
 
 class Machine {
  public:
-  Machine(int id, const std::string& name, const std::string& price)
-      : id_(id), name_(name), price_(price) {}
+  // Machine(int id, const std::string& name, const std::string& price)
+  //   : id_(id), name_(name), price_(price) {}
 
-  Machine(const json& data)
-      : id_(data["id"]), name_(data["name"]), price_(data["price"]) {}
+  // Machine(const json& data)
+  //: id_(data["id"]), name_(data["name"]), price_(data["price"]) {}
 
   Machine(int id) {
     id_ = id;
