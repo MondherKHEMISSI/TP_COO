@@ -54,9 +54,11 @@ class Machine {
     out << "price: " << price_ << "\n";
   }
 
+ public:
+  std::string name_;
+
  protected:
   int id_;
-  std::string name_;
   std::string price_;
 };
 
@@ -122,7 +124,7 @@ class Departement {
     out << "latitude: " << latitude_ << "\n";
   }
 
- protected:
+ public:
   int id_;
   std::string name_;
   std::string zip_code_;
@@ -175,7 +177,7 @@ class Ingredient {
     out << "name: " << name_ << "\n";
   }
 
- protected:
+ public:
   int id_;
   std::string name_;
 };
@@ -230,7 +232,7 @@ class IngredientQuantity {
     out << "Quantity: " << quantity_ << "\n";
   }
 
- protected:
+ public:
   int id_;
   std::unique_ptr<Ingredient> ingredient_;
   std::string quantity_;
@@ -302,7 +304,7 @@ class Action {
     }*/
   }
 
- protected:
+ public:
   int id_;
   std::string action_;
   std::string command_;
@@ -359,7 +361,7 @@ class Recipe {
     // out << "Action ID: " << actionId_ << "\n";
   }
 
- protected:
+ public:
   int id_;
   std::string name_;
   std::unique_ptr<Action> action_;
@@ -486,24 +488,41 @@ class Factory {
     out << "Id: " << id_ << "\n";
     out << "Name: " << name_ << "\n";
     out << "Area: " << area_ << "\n";
-    /*out << "Departement ID: " << departementId_ << "\n";
+    out << "Departement: " << departement_->name_ << "\n";
     int i = 1;
-    for (const auto &machineId: machinesIds_) {
-              out << "Machine_" << i << " Id: " << machineId << "\n";
-              i++;
+    for (const auto& machine : machines_) {
+      out << "Machine_" << i << " : " << machine->name_ << "\n";
+      i++;
     }
 
     i = 1;
-    for (const auto &stockId: stocksIds_) {
-              out << "Stock_" << i << " Id: " << stockId << "\n";
-              i++;
+    std::cout << "**********************STOCKS***********************"
+              << "\n";
+    for (const auto& stock : stocks_) {
+      out << "Stock_" << i << ": " << stock->ingredient_->name_ << "\n";
+      out << "  quantity: " << stock->quantity_ << "\n";
+      i++;
     }
+    std::cout << "******************************************************"
+              << "\n\n\n";
 
+    std::cout << "**************************RECIPES************************"
+              << "\n";
     i = 1;
-    for (const auto &recipeId: recipesIds_) {
-              out << "Recipe_" << i << " Id: " << recipeId << "\n";
-              i++;
-    }*/
+    for (const auto& recipe : recipes_) {
+      out << "Recipe_" << i << ": " << recipe->name_ << "\n";
+      out << "  Machine: " << recipe->action_->machine_->name_ << "\n";
+      int j = 1;
+      for (const auto& ingredient : recipe->action_->ingredientsQuantity_) {
+        out << "  Ingredient_" << j << ": " << ingredient->ingredient_->name_
+            << "\n";
+        out << "    quantity: " << ingredient->quantity_ << "\n";
+        j++;
+      }
+      i++;
+    }
+    std::cout << "******************************************************"
+              << "\n\n\n";
   }
 
  protected:
@@ -516,7 +535,68 @@ class Factory {
   std::vector<std::unique_ptr<Recipe>> recipes_;
 };
 
+auto loading() {
+  const int totalSteps = 100;
+
+  std::cout << "\t\tProduction in progress...\n";
+
+  for (int i = 0; i <= totalSteps; ++i) {
+    // Affichage de la barre de progression
+    float progress = static_cast<float>(i) / totalSteps;
+    int barWidth = 50;
+    int pos = static_cast<int>(barWidth * progress);
+
+    std::cout << "[";
+    for (int j = 0; j < barWidth; ++j) {
+      if (j < pos)
+        std::cout << "=";
+      else if (j == pos)
+        std::cout << ">";
+      else
+        std::cout << " ";
+    }
+    std::cout << "] " << int(progress * 100.0) << "%\r";
+    std::cout.flush();
+
+    // Simulez un délai pour montrer le chargement (remplacez cela par votre
+    // logique réelle)
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+
+  std::cout << "\n\t\tProduction completed!\n\n";
+}
+
 auto main() -> int {
+  auto IdFactory = 0;
+  std::cout << "Enter a factory ID :";
+  std::cin >> IdFactory;
+  Factory fac1(IdFactory);
+  std::cout << fac1;
+
+  loading();
+
+  nlohmann::json jsonData = {
+      {"departement", 42}, {"profit", 123}
+      // ... ajoutez d'autres données au besoin
+  };
+
+  // Convertir l'objet JSON en une chaîne de caractères
+  std::string jsonString = jsonData.dump();
+
+  // Configuration de la requête POST avec cpr
+  cpr::Response r = cpr::Post(cpr::Url{"http://localhost:8000/sale/"},
+                              cpr::Header{{"Content-Type", "application/json"}},
+                              cpr::Body{jsonString});
+
+  // Vérification du code de statut de la réponse
+  if (r.status_code == 200) {
+    std::cout << "Requête réussie. Réponse : " << r.text << std::endl;
+  } else {
+    std::cerr << "Erreur lors de la requête. Code de statut : " << r.status_code
+              << std::endl;
+  }
+
+  /*
   auto IdDepartement = 0;
   std::cout << "Enter an Departement ID :";
   std::cin >> IdDepartement;
@@ -528,12 +608,6 @@ auto main() -> int {
   std::cin >> IdMachine;
   Machine etiqueteuse(IdMachine);
   std::cout << etiqueteuse;
-
-  auto IdFactory = 0;
-  std::cout << "Enter an Factory ID :";
-  std::cin >> IdFactory;
-  Factory usine(IdFactory);
-  std::cout << usine;
 
   auto IdIngredient = 0;
   std::cout << "Enter an Ingredient ID :";
@@ -564,6 +638,6 @@ auto main() -> int {
   std::cin >> IdPrice;
   Price price(IdPrice);
   std::cout << price;
-
+*/
   return 0;
 }
