@@ -6,6 +6,61 @@
 
 using json = nlohmann::json;
 
+auto loading() {
+  const int totalSteps = 100;
+
+  std::cout << "\t\tProduction in progress...\n";
+
+  for (int i = 0; i <= totalSteps; ++i) {
+    // Affichage de la barre de progression
+    float progress = static_cast<float>(i) / totalSteps;
+    int barWidth = 50;
+    int pos = static_cast<int>(barWidth * progress);
+
+    std::cout << "[";
+    for (int j = 0; j < barWidth; ++j) {
+      if (j < pos)
+        std::cout << "=";
+      else if (j == pos)
+        std::cout << ">";
+      else
+        std::cout << " ";
+    }
+    std::cout << "] " << int(progress * 100.0) << "%\r";
+    std::cout.flush();
+
+    // Simulez un délai pour montrer le chargement (remplacez cela par votre
+    // logique réelle)
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+
+  std::cout << "\n\t\tProduction completed!\n\n";
+}
+
+auto update(int id, int value) {
+  nlohmann::json jsonData = {
+      {"quantity", std::to_string(value)}, {"id", id}
+      // ... ajoutez d'autres données au besoin
+  };
+
+  // Convertir l'objet JSON en une chaîne de caractères
+  std::string jsonString = jsonData.dump();
+
+  // Configuration de la requête POST avec cpr
+  std::string url = "http://localhost:8000/ingredientquantity/";
+  cpr::Response r = cpr::Post(cpr::Url{url},
+                              cpr::Header{{"Content-Type", "application/json"}},
+                              cpr::Body{jsonString});
+
+  // Vérification du code de statut de la réponse
+  if (r.status_code == 200) {
+    std::cout << "Successful request. Response : " << r.text << std::endl;
+  } else {
+    std::cerr << "Error during HTTP request. status code : " << r.status_code
+              << std::endl;
+  }
+}
+
 class Machine {
  public:
   // Machine(int id, const std::string& name, const std::string& price)
@@ -501,6 +556,8 @@ class Factory {
     for (const auto& stock : stocks_) {
       out << "Stock_" << i << ": " << stock->ingredient_->name_ << "\n";
       out << "  quantity: " << stock->quantity_ << "\n";
+      out << "    I)d: " << stock->id_ << "\n";
+
       i++;
     }
     std::cout << "******************************************************"
@@ -525,6 +582,45 @@ class Factory {
               << "\n\n\n";
   }
 
+  void chooseUpdate() {
+    int i = 1;
+    int choice = 0;
+    std::cout << "Recipe Choice: "
+              << "\n";
+    for (const auto& recipe : recipes_) {
+      std::cout << "\tChoose (" << i << ") for: " << recipe->name_ << "\n";
+      i++;
+    }
+
+    std::cin >> choice;
+    int j = 1;
+    for (const auto& ingredient :
+         recipes_[choice - 1]->action_->ingredientsQuantity_) {
+      std::cout << "  Ingredient_" << j << ": "
+                << ingredient->ingredient_->name_ << "\n";
+      std::cout << "    quantity: " << ingredient->quantity_ << "\n";
+      j++;
+    }
+
+    loading();
+
+    j = 1;
+    for (const auto& ingredient :
+         recipes_[choice - 1]->action_->ingredientsQuantity_) {
+      for (const auto& stock : stocks_) {
+        if (ingredient->ingredient_->name_ == stock->ingredient_->name_) {
+          int value = stoi(stock->quantity_.substr(0, 4)) -
+                      stoi(ingredient->quantity_.substr(0, 1));
+          update(stock->id_, value);
+          std::cout << "Stock_" << j << ": " << stock->ingredient_->name_
+                    << "\n";
+          std::cout << "  quantity: " << value << "\n";
+          j++;
+        }
+      }
+    }
+  }
+
  protected:
   int id_;
   std::string name_;
@@ -535,37 +631,6 @@ class Factory {
   std::vector<std::unique_ptr<Recipe>> recipes_;
 };
 
-auto loading() {
-  const int totalSteps = 100;
-
-  std::cout << "\t\tProduction in progress...\n";
-
-  for (int i = 0; i <= totalSteps; ++i) {
-    // Affichage de la barre de progression
-    float progress = static_cast<float>(i) / totalSteps;
-    int barWidth = 50;
-    int pos = static_cast<int>(barWidth * progress);
-
-    std::cout << "[";
-    for (int j = 0; j < barWidth; ++j) {
-      if (j < pos)
-        std::cout << "=";
-      else if (j == pos)
-        std::cout << ">";
-      else
-        std::cout << " ";
-    }
-    std::cout << "] " << int(progress * 100.0) << "%\r";
-    std::cout.flush();
-
-    // Simulez un délai pour montrer le chargement (remplacez cela par votre
-    // logique réelle)
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-  }
-
-  std::cout << "\n\t\tProduction completed!\n\n";
-}
-
 auto main() -> int {
   auto IdFactory = 0;
   std::cout << "Enter a factory ID :";
@@ -573,28 +638,7 @@ auto main() -> int {
   Factory fac1(IdFactory);
   std::cout << fac1;
 
-  loading();
-
-  nlohmann::json jsonData = {
-      {"departement", 42}, {"profit", 123}
-      // ... ajoutez d'autres données au besoin
-  };
-
-  // Convertir l'objet JSON en une chaîne de caractères
-  std::string jsonString = jsonData.dump();
-
-  // Configuration de la requête POST avec cpr
-  cpr::Response r = cpr::Post(cpr::Url{"http://localhost:8000/sale/"},
-                              cpr::Header{{"Content-Type", "application/json"}},
-                              cpr::Body{jsonString});
-
-  // Vérification du code de statut de la réponse
-  if (r.status_code == 200) {
-    std::cout << "Requête réussie. Réponse : " << r.text << std::endl;
-  } else {
-    std::cerr << "Erreur lors de la requête. Code de statut : " << r.status_code
-              << std::endl;
-  }
+  fac1.chooseUpdate();
 
   /*
   auto IdDepartement = 0;
