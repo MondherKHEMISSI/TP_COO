@@ -640,48 +640,5 @@ auto main() -> int {
 
   fac1.chooseUpdate();
 
-  /*
-  auto IdDepartement = 0;
-  std::cout << "Enter an Departement ID :";
-  std::cin >> IdDepartement;
-  Departement haute_garonne(IdDepartement);
-  std::cout << haute_garonne;
-
-  auto IdMachine = 0;
-  std::cout << "Enter an Machine ID :";
-  std::cin >> IdMachine;
-  Machine etiqueteuse(IdMachine);
-  std::cout << etiqueteuse;
-
-  auto IdIngredient = 0;
-  std::cout << "Enter an Ingredient ID :";
-  std::cin >> IdIngredient;
-  Ingredient ing(IdIngredient);
-  std::cout << ing;
-
-  auto IdIngredientQuantity = 0;
-  std::cout << "Enter an Ingredient Quantity ID :";
-  std::cin >> IdIngredientQuantity;
-  IngredientQuantity ingQuantity(IdIngredientQuantity);
-  std::cout << ingQuantity;
-
-  auto IdRecipe = 0;
-  std::cout << "Enter an Recipe ID :";
-  std::cin >> IdRecipe;
-  Recipe recipe(IdRecipe);
-  std::cout << recipe;
-
-  auto IdAction = 0;
-  std::cout << "Enter an Action ID :";
-  std::cin >> IdAction;
-  Action action(IdAction);
-  std::cout << action;
-
-  auto IdPrice = 0;
-  std::cout << "Enter a Price ID :";
-  std::cin >> IdPrice;
-  Price price(IdPrice);
-  std::cout << price;
-*/
   return 0;
 }

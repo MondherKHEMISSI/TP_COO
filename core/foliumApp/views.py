@@ -120,7 +120,6 @@ class IngredientDetailView(DetailView):
         return JsonResponse(data)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class IngredientQuantityDetailView(DetailView):
     template_name = "ingredientquantity_detail.html"
     model = IngredientQuantity
@@ -132,19 +131,6 @@ class IngredientQuantityDetailView(DetailView):
             "quantity": self.object.quantity,
         }
         return JsonResponse(data)
-
-    """
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        quantity = data.get("quantity")
-        id = data.get("id")
-
-        IngredientQuantity.objects.filter(id=id).update(quantity=quantity)
-
-        message = {"message": "Stocks successfully updated!"}
-        json.dumps(message, indent=4)
-        return JsonResponse(message, json_dumps_params={"indent": 4})
-    """
 
 
 @method_decorator(csrf_exempt, name="dispatch")
