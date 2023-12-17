@@ -556,7 +556,6 @@ class Factory {
     for (const auto& stock : stocks_) {
       out << "Stock_" << i << ": " << stock->ingredient_->name_ << "\n";
       out << "  quantity: " << stock->quantity_ << "\n";
-      out << "    I)d: " << stock->id_ << "\n";
 
       i++;
     }
