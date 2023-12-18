@@ -576,6 +576,8 @@ class Factory {
         j++;
       }
       i++;
+      std::cout << "----------------------------------------------------"
+                << "\n";
     }
     std::cout << "******************************************************"
               << "\n\n\n";
@@ -631,10 +633,7 @@ class Factory {
 };
 
 auto main() -> int {
-  auto IdFactory = 0;
-  std::cout << "Enter a factory ID :";
-  std::cin >> IdFactory;
-  Factory fac1(IdFactory);
+  Factory fac1(4);
   std::cout << fac1;
 
   fac1.chooseUpdate();

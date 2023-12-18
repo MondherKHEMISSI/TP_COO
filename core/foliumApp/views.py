@@ -101,7 +101,7 @@ class FactoryDetailView(DetailView):
             "area": self.object.area,
             "departement_ID": self.object.departement.id,
             "machines_IDs": [machine.id for machine in self.object.machines.all()],
-            "stocks_IDs": [stock.ingredient.id for stock in self.object.stocks.all()],
+            "stocks_IDs": [stock.id for stock in self.object.stocks.all()],
             "recipes_IDs": [recipe.id for recipe in self.object.recipes.all()],
             "costs": str(self.object.costs()) + " €",
         }
@@ -311,7 +311,7 @@ def index(request):
 
     totalCosts = 0
     for factory in factories:
-        # factory.buyStocks()
+        factory.buyStocks()
         folium.Marker(
             location=factory.getLongitudeLatitude(),
             icon=folium.Icon(color="green", prefix="fa", icon="star"),

@@ -48,7 +48,7 @@ class IngredientQuantity(models.Model):
         return f"{self.ingredient}: {self.quantity}"
 
     def costs(self, zip_code):
-        ingredientCost = int(self.quantity.split(" ")[0]) * int(
+        ingredientCost = float(self.quantity.split(" ")[0]) * float(
             self.ingredient.price_set.get(
                 departement_name__zip_code=zip_code
             ).price.split(" ")[0]
@@ -117,12 +117,43 @@ class Factory(models.Model):
     def getLongitudeLatitude(self):
         return self.departement.latitude, self.departement.longitude
 
-    """
     def buyStocks(self):
+        ingredientFound = False
         for recipe in self.recipes.all():
-            for ingredient in recipe.action.ingredient.all():
-                self.stocks.create(ingredient=ingredient, quantity=ingredient.quantity)
-    """
+            for ingredientInRecipe in recipe.action.ingredient.all():
+                for ingredientInStock in self.stocks.all():
+                    if (
+                        ingredientInRecipe.ingredient.name
+                        == ingredientInStock.ingredient.name
+                    ):
+                        ingredientFound = True
+                        if (
+                            float(ingredientInStock.quantity.split(" ")[0])
+                            < float(ingredientInRecipe.quantity.split(" ")[0]) * 100
+                        ):
+                            self.stocks.filter(
+                                ingredient=ingredientInStock.ingredient
+                            ).update(
+                                quantity=str(
+                                    float(ingredientInRecipe.quantity.split(" ")[0])
+                                    * 100
+                                )
+                                + " kg"
+                            )
+
+                if not ingredientFound:
+                    newIngredient = Ingredient.objects.get(
+                        name=ingredientInRecipe.ingredient.name
+                    )
+                    self.stocks.create(
+                        ingredient=newIngredient,
+                        quantity=str(
+                            float(ingredientInRecipe.quantity.split(" ")[0]) * 100
+                        )
+                        + " kg",
+                    )
+
+                ingredientFound = False
 
 
 class Sale(models.Model):
