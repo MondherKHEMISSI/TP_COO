@@ -1,5 +1,4 @@
-# folium-project
-Linux kernel
+# Brewsim Project
 ============
 
 There are several guides for kernel developers and users. These guides can
@@ -13,6 +12,8 @@ In order to build the documentation, use ``make htmldocs`` or
 
 There are various text files in the Documentation/ subdirectory,
 several of them using the Restructured Text markup notation.
+
+    git clone git@github.com:MondherKHEMISSI/TP_COO.git
 
 Please read the Documentation/process/changes.rst file, as it contains the
 requirements for building and running the kernel, and information about
