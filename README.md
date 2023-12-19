@@ -19,7 +19,11 @@ Dans un terminal :
 
 Dans un nouveau terminal :
 
-    cd ~/TP_COO/lowel_level
+    cd <project directory>/TP_COO
+
+    source .env/bin/activate
+
+    cd low_level
 
     cmake -B /tmp/build -S . -DCMAKE_CXX_STANDARD=17
 
