@@ -9,6 +9,10 @@
 
     pip3 install -r requirements.txt
 
+    cd core
+
+    ./manage.py runserver
+
     cd ~/TP_COO/lowel_level
 
     cmake -B /tmp/build -S . -DCMAKE_CXX_STANDARD=17
