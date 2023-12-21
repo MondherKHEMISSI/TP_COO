@@ -19,7 +19,7 @@ Dans un terminal, sélectionnez d'abord un répertoire de travail, puis collez c
 
 Ouvrez un nouveau terminal, placez-vous d'abord dans le répertoire de travail contenant le dossier TP_COO, puis collez ces commandes:
 
-    cd <project directory>/TP_COO
+    cd TP_COO
 
     source .env/bin/activate
 
