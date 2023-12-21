@@ -310,6 +310,7 @@ def index(request):
     # Displaying a marker in the map for every factory
     totalCosts = 0
     for factory in factories:
+        # Reload the web browser page to buy new stocks
         factory.buyStocks()
         folium.Marker(
             location=factory.getLongitudeLatitude(),

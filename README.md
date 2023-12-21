@@ -28,8 +28,5 @@ Ouvrez un nouveau terminal, placez-vous d'abord dans le répertoire de travail c
     cmake -B /tmp/build -S . -DCMAKE_CXX_STANDARD=17
 
     cmake --build /tmp/build
-    
+
     /tmp/build/low_level
-    
-
-
