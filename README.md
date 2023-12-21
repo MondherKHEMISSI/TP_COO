@@ -1,7 +1,7 @@
 # Brewsim Project
 ============
 
-Dans un terminal :
+Dans un terminal, sélectionnez d'abord un répertoire de travail, puis collez ces commandes:
 
     git clone git@github.com:MondherKHEMISSI/TP_COO.git
 
@@ -17,7 +17,7 @@ Dans un terminal :
 
     ./manage.py runserver
 
-Dans un nouveau terminal :
+Ouvrez un nouveau terminal, placez-vous d'abord dans le répertoire de travail contenant le dossier TP_COO, puis collez ces commandes:
 
     cd <project directory>/TP_COO
 
