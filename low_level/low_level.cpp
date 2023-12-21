@@ -482,22 +482,24 @@ class Factory {
 
   void chooseUpdate() {
     int i = 1;
-    int choice = 0;
+    std::string choice = "";
     std::cout << "Recipe Choice: "
               << "\n";
     for (const auto& recipe : recipes_) {
-      std::cout << "\tChoose (" << i << ") for: " << recipe->name_ << "\n";
+      std::cout << "\tEnter #" << i << " for: " << recipe->name_ << "\n";
       i++;
     }
 
     do {
-      std::cout << "i: " << i << "\n";
+      std::cout << "\nEnter a numerical value from the list of recipes above: "
+                << "\n";
       std::cin >> choice;
-    } while (!isdigit(choice) || (choice > i - 1 && choice < 0));
+    } while (std::atoi(choice.c_str()) > i - 1 ||
+             std::atoi(choice.c_str()) < 1);
 
     int j = 1;
-    for (const auto& ingredient :
-         recipes_[choice - 1]->action_->ingredientsQuantity_) {
+    for (const auto& ingredient : recipes_[std::atoi(choice.c_str()) - 1]
+                                      ->action_->ingredientsQuantity_) {
       std::cout << "  Ingredient_" << j << ": "
                 << ingredient->ingredient_->name_ << "\n";
       std::cout << "    quantity: " << ingredient->quantity_ << "\n";
@@ -507,8 +509,8 @@ class Factory {
     loading();
 
     j = 1;
-    for (const auto& ingredient :
-         recipes_[choice - 1]->action_->ingredientsQuantity_) {
+    for (const auto& ingredient : recipes_[std::atoi(choice.c_str()) - 1]
+                                      ->action_->ingredientsQuantity_) {
       for (const auto& stock : stocks_) {
         if (ingredient->ingredient_->name_ == stock->ingredient_->name_) {
           int value = stoi(stock->quantity_.substr(0, 4)) -
