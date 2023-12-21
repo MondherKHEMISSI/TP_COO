@@ -6,6 +6,7 @@
 
 using json = nlohmann::json;
 
+// Bare de chargement
 auto loading() {
   const int totalSteps = 100;
 
@@ -29,19 +30,16 @@ auto loading() {
     std::cout << "] " << int(progress * 100.0) << "%\r";
     std::cout.flush();
 
-    // Simulez un délai pour montrer le chargement (remplacez cela par votre
-    // logique réelle)
+    // Simulez un délai pour montrer le chargement
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
 
   std::cout << "\n\t\tProduction completed!\n\n";
 }
 
+// Fonction permettant la mise à jour de la base de données après la production.
 auto update(int id, int value) {
-  nlohmann::json jsonData = {
-      {"quantity", std::to_string(value)}, {"id", id}
-      // ... ajoutez d'autres données au besoin
-  };
+  nlohmann::json jsonData = {{"quantity", std::to_string(value)}, {"id", id}};
 
   // Convertir l'objet JSON en une chaîne de caractères
   std::string jsonString = jsonData.dump();
@@ -98,17 +96,6 @@ class Machine {
     }
   }
 
-  friend std::ostream& operator<<(std::ostream& out, const Machine& machine) {
-    machine.printInfo(out);
-    return out;
-  }
-
-  void printInfo(std::ostream& out) const {
-    out << "id: " << id_ << "\n";
-    out << "name: " << name_ << "\n";
-    out << "price: " << price_ << "\n";
-  }
-
  public:
   std::string name_;
 
@@ -163,22 +150,6 @@ class Departement {
     }
   }
 
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const Departement& departement) {
-    departement.printInfo(out);
-    return out;
-  }
-
-  void printInfo(std::ostream& out) const {
-    out << "id: " << id_ << "\n";
-    out << "name: " << name_ << "\n";
-    out << "zip_code: " << zip_code_ << "\n";
-    out << "price_m2: " << price_m2_ << "\n";
-    out << "meteo: " << meteo_ << "\n";
-    out << "longitude: " << longitude_ << "\n";
-    out << "latitude: " << latitude_ << "\n";
-  }
-
  public:
   int id_;
   std::string name_;
@@ -222,16 +193,6 @@ class Ingredient {
     }
   }
 
-  friend std::ostream& operator<<(std::ostream& out, const Ingredient& ing) {
-    ing.printInfo(out);
-    return out;
-  }
-
-  void printInfo(std::ostream& out) const {
-    out << "id: " << id_ << "\n";
-    out << "name: " << name_ << "\n";
-  }
-
  public:
   int id_;
   std::string name_;
@@ -239,11 +200,11 @@ class Ingredient {
 
 class IngredientQuantity {
  public:
-  // IngredientQuantity(int id, const int ingredient_ID, const std::string&
-  // quantity) : id_(id), ingredientId_(ingredient_ID), quantity_(quantity) {}
+  // IngredientQuantity(int id, const std::string& quantity) : id_(id),
+  // quantity_(quantity) {}
 
   // IngredientQuantity(const json& data) : id_(data["id"]),
-  // ingredientId_(data["ingredient_ID"]), quantity_(data["quantity"]) {}
+  // quantity_(data["quantity"]) {}
 
   IngredientQuantity(int id) {
     id_ = id;
@@ -275,18 +236,6 @@ class IngredientQuantity {
     }
   }
 
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const IngredientQuantity& ingQuantity) {
-    ingQuantity.printInfo(out);
-    return out;
-  }
-
-  void printInfo(std::ostream& out) const {
-    out << "id: " << id_ << "\n";
-    // out << "Ingredient ID: " << ingredientId_ << "\n";
-    out << "Quantity: " << quantity_ << "\n";
-  }
-
  public:
   int id_;
   std::unique_ptr<Ingredient> ingredient_;
@@ -295,15 +244,12 @@ class IngredientQuantity {
 
 class Action {
  public:
-  // Factory(int id, const std::string& name, const std::string& zip_code, const
-  // std::string& price_m2, const std::string& meteo, double longitude, double
-  // latitude) : id_{id}, name_{name}, zip_code_{zip_code}, price_m2_{price_m2},
-  // meteo_{meteo}, longitude_{longitude}, latitude_{latitude} {}
+  // Action(int id, const std::string& action, const std::string& command, const
+  // std::string& duration) : id_{id}, action_{action}, command_{command},
+  // duration_{duration} {}
 
-  // Factory(const json& data) : id_(data["id"]), name_(data["name"]),
-  // zip_code_(data["zip_code"]), price_m2_(data["price_m2"]),
-  // meteo_(data["meteo"]), longitude_(data["longitude"]),
-  // latitude_(data["latitude"]) {}
+  // Action(const json& data) : id_(data["id"]), action_(data["action"]),
+  // command_(data["command"]), duration_(data["duration"]) {}
 
   Action(int id) {
     id_ = id;
@@ -341,24 +287,6 @@ class Action {
     }
   }
 
-  friend std::ostream& operator<<(std::ostream& out, const Action& action) {
-    action.printInfo(out);
-    return out;
-  }
-
-  void printInfo(std::ostream& out) const {
-    out << "Id: " << id_ << "\n";
-    out << "Action: " << action_ << "\n";
-    out << "Command: " << command_ << "\n";
-    out << "Duration: " << duration_ << "\n";
-    /*out << "Machine ID: " << machineId_ << "\n";
-    int i = 1;
-    for (const auto &ingredientQuantityId: ingredientsQuantityIds_) {
-              out << "Ingredient Quantity_" << i << " Id: " <<
-    ingredientQuantityId << "\n"; i++;
-    }*/
-  }
-
  public:
   int id_;
   std::string action_;
@@ -370,11 +298,9 @@ class Action {
 
 class Recipe {
  public:
-  // Recipe(int id, const std::string& name,  int actionID) : id_(id),
-  // name_(name), actionId_(actionID) {}
+  // Recipe(int id, const std::string& name) : id_(id), name_(name) {}
 
-  // Recipe(const json& data) : id_(data["id"]), name_(data["name"]),
-  // actionId_(data["action_ID"]) {}
+  // Recipe(const json& data) : id_(data["id"]), name_(data["name"]) {}
 
   Recipe(int id) {
     id_ = id;
@@ -405,17 +331,6 @@ class Recipe {
     }
   }
 
-  friend std::ostream& operator<<(std::ostream& out, const Recipe& recipe) {
-    recipe.printInfo(out);
-    return out;
-  }
-
-  void printInfo(std::ostream& out) const {
-    out << "Id: " << id_ << "\n";
-    out << "Name: " << name_ << "\n";
-    // out << "Action ID: " << actionId_ << "\n";
-  }
-
  public:
   int id_;
   std::string name_;
@@ -424,11 +339,9 @@ class Recipe {
 
 class Price {
  public:
-  // Price(int id, const std::string& name,  int actionID) : id_(id),
-  // name_(name), actionId_(actionID) {}
+  // Price(int id, const std::string& price): id_(id), price_(price) {}
 
-  // Price(const json& data) : id_(data["id"]), name_(data["name"]),
-  // actionId_(data["action_ID"]) {}
+  // Price(const json& data) : id_(data["id"]), price_(data["price"])) {}
 
   Price(int id) {
     id_ = id;
@@ -461,18 +374,6 @@ class Price {
     }
   }
 
-  friend std::ostream& operator<<(std::ostream& out, const Price& price) {
-    price.printInfo(out);
-    return out;
-  }
-
-  void printInfo(std::ostream& out) const {
-    out << "Id: " << id_ << "\n";
-    // out << "Ingredient: " << ingredient_ << "\n";
-    // out << "Departement: " << departement_ << "\n";
-    out << "Price: " << price_ << "\n";
-  }
-
  protected:
   int id_;
   std::string price_;
@@ -482,15 +383,11 @@ class Price {
 
 class Factory {
  public:
-  // Factory(int id, const std::string& name, const std::string& zip_code, const
-  // std::string& price_m2, const std::string& meteo, double longitude, double
-  // latitude) : id_{id}, name_{name}, zip_code_{zip_code}, price_m2_{price_m2},
-  // meteo_{meteo}, longitude_{longitude}, latitude_{latitude} {}
+  // Factory(int id, const std::string& name, const std::string& area) :
+  // id_{id}, name_{name}, area_{area} {}
 
   // Factory(const json& data) : id_(data["id"]), name_(data["name"]),
-  // zip_code_(data["zip_code"]), price_m2_(data["price_m2"]),
-  // meteo_(data["meteo"]), longitude_(data["longitude"]),
-  // latitude_(data["latitude"]) {}
+  // area_(data["area"])  {}
 
   Factory(int id) {
     id_ = id;
@@ -593,7 +490,11 @@ class Factory {
       i++;
     }
 
-    std::cin >> choice;
+    do {
+      std::cout << "i: " << i << "\n";
+      std::cin >> choice;
+    } while (!isdigit(choice) || (choice > i - 1 && choice < 0));
+
     int j = 1;
     for (const auto& ingredient :
          recipes_[choice - 1]->action_->ingredientsQuantity_) {

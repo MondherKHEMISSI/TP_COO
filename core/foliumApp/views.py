@@ -233,7 +233,7 @@ def index(request):
     fr_departements = requests.get(url).json()
     found = False
 
-    # Adding price/m2 and temperature to display a popup on every departements hover
+    # Adding price/m2 and temperature to display a popup on every departements mouse-hover
     for i in range(len(fr_departements["features"])):
         name = fr_departements["features"][i]["properties"]["nom"]
         for departement in departements:
@@ -306,9 +306,8 @@ def index(request):
         popup=popup,
     ).add_to(m)
 
-    # Calculating the total costs of every factory
-    # and displaying a marker in the map for it
-
+    # Calculating the total costs of every factory.
+    # Displaying a marker in the map for every factory
     totalCosts = 0
     for factory in factories:
         factory.buyStocks()
