@@ -1,5 +1,9 @@
 # Brewsim Project
-============
+=================
+# M2 ISTR 
+# KHEMISSI Mondher Abderaouf
+# BAICHE Azzedine 
+=============================
 
 Dans un terminal, sélectionnez d'abord un répertoire de travail, puis collez ces commandes:
 
